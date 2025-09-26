@@ -228,10 +228,46 @@ button:hover {
 
 .hidden { display: none; }
 #containerResultados, .container-historico, .container-previsao { margin-top: 20px; }
-.table-wrapper { display: flex; justify-content: center; overflow-x: auto; width: 100%; }
-.tabela-resultados { border-collapse: collapse; margin-top: 20px; }
-.tabela-resultados th, .tabela-resultados td { border: 1px solid #e0e0e0; padding: 10px 14px; text-align: left; white-space: nowrap; vertical-align: middle; }
-.tabela-resultados th { background-color: #ecf0f1; color: #34495e; font-weight: 500; }
+
+/* --- REGRAS PRINCIPAIS PARA A TABELA E ROLAGEM --- */
+.table-wrapper { 
+    overflow-x: auto; 
+    width: 100%;
+}
+
+.tabela-resultados { 
+    border-collapse: collapse; 
+    margin-top: 20px; 
+    table-layout: fixed; /* FORÇA a tabela a obedecer as larguras definidas */
+    width: 100%;       /* A tabela ocupa 100% do wrapper (que terá rolagem) */
+}
+
+.tabela-resultados th, 
+.tabela-resultados td { 
+    border: 1px solid #e0e0e0; 
+    padding: 10px 14px; 
+    text-align: left; 
+    vertical-align: middle; 
+    /* Permite que o texto quebre caso a célula seja muito estreita */
+    white-space: normal; 
+    word-wrap: break-word; 
+}
+
+.tabela-resultados th { 
+    background-color: #ecf0f1; 
+    color: #34495e; 
+    font-weight: 500; 
+}
+
+/* --- LARGURAS FIXAS PARA AS COLUNAS DA TABELA DE HISTÓRICO --- */
+.container-historico .tabela-resultados th:nth-child(1) { width: 12%; } /* Data */
+.container-historico .tabela-resultados th:nth-child(2) { width: 25%; } /* Cliente */
+.container-historico .tabela-resultados th:nth-child(3) { width: 25%; } /* Plano */
+.container-historico .tabela-resultados th:nth-child(4) { width: 15%; } /* Valor */
+.container-historico .tabela-resultados th:nth-child(5) { width: 15%; } /* Comissão */
+.container-historico .tabela-resultados th:nth-child(6) { width: 8%; }  /* Ações */
+
+
 .tabela-detalhada th { position: sticky; top: 0; }
 .resumo-comissao { margin-top: 20px; padding-top: 15px; border-top: 1px solid #e0e0e0; max-width: 800px; margin-left: auto; margin-right: auto; }
 .linha-resumo { display: flex; justify-content: space-between; padding: 8px 5px; font-size: 1.1em; }
@@ -240,15 +276,6 @@ button:hover {
 #corpoTabelaHistorico tr { cursor: pointer; }
 #corpoTabelaHistorico tr:hover { background-color: #f9f9f9; }
 .tabela-detalhada th:last-child, .tabela-detalhada td:last-child { font-weight: bold; background-color: #f0f2f5; }
-
-/* Larguras mínimas para DESKTOP */
-.container-historico .tabela-resultados th:nth-child(1), .container-historico .tabela-resultados td:nth-child(1) { min-width: 100px; }
-.container-historico .tabela-resultados th:nth-child(2), .container-historico .tabela-resultados td:nth-child(2) { min-width: 200px; white-space: normal; }
-.container-historico .tabela-resultados th:nth-child(3), .container-historico .tabela-resultados td:nth-child(3) { min-width: 250px; white-space: normal; }
-.container-historico .tabela-resultados th:nth-child(4), .container-historico .tabela-resultados td:nth-child(4),
-.container-historico .tabela-resultados th:nth-child(5), .container-historico .tabela-resultados td:nth-child(5) { min-width: 150px; }
-.container-historico .tabela-resultados th:nth-child(6), .container-historico .tabela-resultados td:nth-child(6) { min-width: 120px; }
-
 
 /* --- MEDIA QUERY PARA CELULARES --- */
 @media (max-width: 768px) {
@@ -280,22 +307,8 @@ button:hover {
         margin-right: 0; 
     }
 
-    /* --- NOVOS AJUSTES PARA A TABELA DE HISTÓRICO NO CELULAR --- */
-    .tabela-resultados th,
-    .tabela-resultados td {
-        padding: 8px 10px; /* Reduz o espaçamento interno */
-        font-size: 0.85em; /* Reduz um pouco a fonte */
-    }
-
-    .container-historico .tabela-resultados th:nth-child(2), /* Cliente */
-    .container-historico .tabela-resultados td:nth-child(2),
-    .container-historico .tabela-resultados th:nth-child(3), /* Plano */
-    .container-historico .tabela-resultados td:nth-child(3) {
-        min-width: 150px; /* Reduz a largura mínima para celular */
-    }
-    
-    .botoes-acao button {
-        padding: 6px 8px;
-        font-size: 12px;
+    .tabela-resultados {
+        /* No celular, forçamos um tamanho mínimo total para garantir a rolagem */
+        min-width: 800px; 
     }
 }
