@@ -1,11 +1,11 @@
-// server.js (Versão com correção de caminho para o Render)
+// server.js (Versão Final)
 
 const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
-const path = require('path'); // <-- MUDANÇA 1: Importa o módulo 'path'
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
@@ -14,8 +14,8 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// --- MUDANÇA 2: Usa o 'path.join' para encontrar a pasta 'public' de forma segura ---
-app.use(express.static(path.join(__dirname, 'public')));
+// Esta linha agora vai funcionar, pois a pasta 'public' existe!
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
 
 if (!process.env.MONGO_URI) {
@@ -26,7 +26,6 @@ mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log('>>> SUCESSO: Conectado ao MongoDB Atlas! <<<'))
 .catch((err) => console.error('--- ERRO: Falha ao conectar ao MongoDB ---', err));
 
-// --- O resto do código continua igual ---
 const UsuarioSchema = new mongoose.Schema({ nome: { type: String, required: true }, email: { type: String, required: true, unique: true, lowercase: true }, senha: { type: String, required: true }, });
 const Usuario = mongoose.model('Usuario', UsuarioSchema);
 const VendaSchema = new mongoose.Schema({ idUsuario: { type: mongoose.Schema.Types.ObjectId, ref: 'Usuario', required: true }, dadosVenda: { type: Object, required: true }, });
@@ -40,9 +39,9 @@ app.post('/api/vendas', auth, async (req, res) => { try { const novaVenda = new 
 app.put('/api/vendas/:id', auth, async (req, res) => { try { let venda = await Venda.findById(req.params.id); if (!venda) { return res.status(404).json({ msg: 'Venda não encontrada' }); } if (venda.idUsuario.toString() !== req.usuario.id) { return res.status(401).json({ msg: 'Não autorizado' }); } venda.dadosVenda = req.body; await venda.save(); res.json(venda); } catch (err) { console.error(err.message); res.status(500).send('Erro no servidor'); } });
 app.delete('/api/vendas/:id', auth, async (req, res) => { try { const venda = await Venda.findById(req.params.id); if (!venda) { return res.status(404).json({ msg: 'Venda não encontrada' }); } if (venda.idUsuario.toString() !== req.usuario.id) { return res.status(401).json({ msg: 'Não autorizado' }); } await Venda.findByIdAndDelete(req.params.id); res.json({ msg: 'Venda removida com sucesso' }); } catch (err) { console.error(err.message); res.status(500).send('Erro no servidor'); } });
 
-// --- MUDANÇA 3: Rota principal também usa o 'path.join' ---
+// Rota principal agora também aponta para o caminho correto
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'login.html'));
+    res.sendFile(path.join(__dirname, '..', 'public', 'login.html'));
 });
 
 app.listen(PORT, () => {
