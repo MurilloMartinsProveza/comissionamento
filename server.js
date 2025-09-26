@@ -1,4 +1,4 @@
-// server.js (Versão Final)
+// server.js (Versão Definitiva com o caminho correto)
 
 const express = require('express');
 const mongoose = require('mongoose');
@@ -14,8 +14,8 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Esta linha agora vai funcionar, pois a pasta 'public' existe!
-app.use(express.static(path.join(__dirname, '..', 'public')));
+// --- CORREÇÃO: Removido o '..' para buscar a pasta 'public' na raiz do projeto ---
+app.use(express.static(path.join(__dirname, 'public')));
 
 
 if (!process.env.MONGO_URI) {
@@ -39,9 +39,9 @@ app.post('/api/vendas', auth, async (req, res) => { try { const novaVenda = new 
 app.put('/api/vendas/:id', auth, async (req, res) => { try { let venda = await Venda.findById(req.params.id); if (!venda) { return res.status(404).json({ msg: 'Venda não encontrada' }); } if (venda.idUsuario.toString() !== req.usuario.id) { return res.status(401).json({ msg: 'Não autorizado' }); } venda.dadosVenda = req.body; await venda.save(); res.json(venda); } catch (err) { console.error(err.message); res.status(500).send('Erro no servidor'); } });
 app.delete('/api/vendas/:id', auth, async (req, res) => { try { const venda = await Venda.findById(req.params.id); if (!venda) { return res.status(404).json({ msg: 'Venda não encontrada' }); } if (venda.idUsuario.toString() !== req.usuario.id) { return res.status(401).json({ msg: 'Não autorizado' }); } await Venda.findByIdAndDelete(req.params.id); res.json({ msg: 'Venda removida com sucesso' }); } catch (err) { console.error(err.message); res.status(500).send('Erro no servidor'); } });
 
-// Rota principal agora também aponta para o caminho correto
+// --- Rota principal também corrigida, sem o '..' ---
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'public', 'login.html'));
+    res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
 app.listen(PORT, () => {
