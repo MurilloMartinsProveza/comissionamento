@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora e Histórico de Comissões</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login.html';
+        }
+    </script>
+</head>
+<body>
+
+    <div class="container">
+        <div class="cabecalho-usuario">
+            <span id="saudacaoUsuario">Carregando...</span>
+            <button id="btnSair" class="btn-perigo">Sair</button>
+        </div>
+        
+        <h1>Calculadora de Comissão de Vendas</h1>
+        <p>Insira os dados da venda, calcule sua comissão e salve no histórico local.</p>
+
+        <div class="form-container">
+            <div class="form-group"> <label for="nomeCliente">Nome do Cliente</label> <input type="text" id="nomeCliente" placeholder="Nome completo do cliente"> </div> <div class="form-group"> <label for="valorVenda">Valor da Venda (R$)</label> <input type="number" id="valorVenda" placeholder="Ex: 100000,00" min="0" step="any"> </div> <div class="form-group"> <label for="dataVenda">Data da Venda</label> <input type="date" id="dataVenda"> </div> <div class="form-group"> <label for="inicioGrupo">Mês de Início do Grupo (Opcional)</label> <input type="month" id="inicioGrupo"> </div> <div class="form-group"> <label>Tipo de Venda</label> <div class="radio-group"> <input type="radio" id="tipoImovel" name="tipoVenda" value="imovel" checked> <label for="tipoImovel">Imóvel</label> <input type="radio" id="tipoVeiculo" name="tipoVenda" value="veicular"> <label for="tipoVeiculo">Veicular</label> </div> </div> <div class="form-group" id="grupoPlano"> <label for="planoComissao">Plano de Venda</label> <select id="planoComissao"> <option value="">-- Selecione um plano --</option> </select> </div> <div class="form-group"> <label for="percentualImposto">Imposto (%)</label> <input type="number" id="percentualImposto" placeholder="Ex: 7.5" min="0" value="0" step="any"> </div> <div class="main-buttons"> <button id="btnCalcular">Calcular Comissão</button> <button id="btnCancelarEdicao" class="btn-cancelar hidden">Cancelar Edição</button> </div>
+        </div>
+
+        <div id="containerResultados" class="hidden">
+            <h2>Resultado do Cálculo</h2>
+            <div class="table-wrapper">
+                <table class="tabela-resultados">
+                    <thead> <tr> <th>Parcela</th> <th>Valor da Comissão</th> <th>Data de Recebimento</th> </tr> </thead>
+                    <tbody id="corpoTabelaResultados"></tbody>
+                </table>
+            </div>
+            <div class="resumo-comissao">
+                <div class="linha-resumo"> <span>Comissão Bruta:</span> <span id="valorComissaoBruta"></span> </div> <div class="linha-resumo"> <span>Desconto Imposto (<span id="displayPercentualImposto">0</span>%):</span> <span id="valorDescontoImposto" class="texto-perigo"></span> </div> <div class="linha-resumo total-row"> <strong>Comissão Líquida:</strong> <strong id="valorComissaoLiquida"></strong> </div>
+            </div>
+            <button id="btnSalvar" class="btn-secundario">Salvar Nova Venda</button>
+        </div>
+    </div>
+
+    <div class="container container-historico">
+        <h2>Histórico de Vendas Armazenadas</h2>
+        <p>Clique em uma venda para carregar os detalhes na calculadora acima.</p>
+        <div class="table-wrapper">
+            <table class="tabela-resultados">
+                <thead>
+                    <tr> <th>Data da Venda</th> <th>Cliente</th> <th>Tipo / Plano</th> <th>Valor da Venda</th> <th>Comissão Líquida</th> <th>Ações</th> </tr>
+                </thead>
+                <tbody id="corpoTabelaHistorico"></tbody>
+            </table>
+        </div>
+        <button id="btnLimparHistorico" class="btn-perigo hidden">Limpar todo o Histórico</button>
+    </div>
+
+    <div id="secaoPrevisao" class="container container-previsao hidden">
+        <h2>Previsão de Recebimentos Mensais</h2>
+        <p>Soma de todas as parcelas a receber de todas as vendas salvas, mês a mês.</p>
+        <div class="botoes-previsao">
+            <button id="btnGerarPrevisaoSimples">Gerar Previsão Simples</button>
+            <button id="btnGerarPrevisaoDetalhada" class="btn-secundario">Ver Detalhes por Venda</button>
+        </div>
+        <div id="resultadosPrevisao" class="hidden">
+            <div class="table-wrapper">
+                <table class="tabela-resultados">
+                    <thead> <tr> <th>Mês/Ano</th> <th>Total a Receber (Líquido)</th> </tr> </thead>
+                    <tbody id="corpoTabelaPrevisao"></tbody>
+                </table>
+            </div>
+        </div>
+        <div id="resultadosPrevisaoDetalhada" class="hidden">
+             <div class="table-wrapper">
+                <table class="tabela-resultados tabela-detalhada">
+                    <thead id="cabecalhoPrevisaoDetalhada"></thead>
+                    <tbody id="corpoTabelaPrevisaoDetalhada"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
