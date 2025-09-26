@@ -197,6 +197,7 @@ button:hover {
     margin-top: 15px;
 }
 
+
 .btn-cancelar {
     background-color: #95a5a6;
     color: white;
@@ -207,7 +208,7 @@ button:hover {
 
 .botoes-acao {
     display: flex;
-    flex-direction: column; /* Começa empilhado */
+    flex-direction: column;
     gap: 5px;
 }
 
@@ -224,11 +225,11 @@ button:hover {
 .btn-excluir { background-color: #e74c3c; color: white; }
 .btn-excluir:hover { background-color: #c0392b; }
 
+
 .hidden { display: none; }
 #containerResultados, .container-historico, .container-previsao { margin-top: 20px; }
 .table-wrapper { display: flex; justify-content: center; overflow-x: auto; width: 100%; }
 .tabela-resultados { border-collapse: collapse; margin-top: 20px; }
-.tabela-resultados th, .tabela-resultados td { border: 1px solid #e0e0e0; padding: 10px 14px; text-align: left; white-space: nowrap; }
 .tabela-resultados th { background-color: #ecf0f1; color: #34495e; font-weight: 500; }
 .tabela-detalhada th { position: sticky; top: 0; }
 .resumo-comissao { margin-top: 20px; padding-top: 15px; border-top: 1px solid #e0e0e0; max-width: 800px; margin-left: auto; margin-right: auto; }
@@ -240,26 +241,51 @@ button:hover {
 .tabela-detalhada th:last-child, .tabela-detalhada td:last-child { font-weight: bold; background-color: #f0f2f5; }
 
 
-/* --- MEDIA QUERY PARA CELULARES --- */
+/* --- CORREÇÃO PARA O ALINHAMENTO DAS COLUNAS DA TABELA --- */
+.tabela-resultados th,
+.tabela-resultados td {
+    border: 1px solid #e0e0e0;
+    padding: 10px 14px;
+    text-align: left;
+    white-space: nowrap; /* Força a ficar em uma linha por padrão */
+    vertical-align: middle; /* Centraliza verticalmente */
+}
+
+/* Define larguras mínimas para colunas não quebrarem */
+.container-historico .tabela-resultados th:nth-child(1), /* Data */
+.container-historico .tabela-resultados td:nth-child(1) {
+    min-width: 100px;
+}
+.container-historico .tabela-resultados th:nth-child(2), /* Cliente */
+.container-historico .tabela-resultados td:nth-child(2) {
+    min-width: 200px;
+    white-space: normal; /* Permite que o nome do cliente quebre a linha */
+}
+.container-historico .tabela-resultados th:nth-child(3), /* Plano */
+.container-historico .tabela-resultados td:nth-child(3) {
+    min-width: 250px;
+    white-space: normal; /* Permite que o nome do plano quebre a linha */
+}
+.container-historico .tabela-resultados th:nth-child(4), /* Valor */
+.container-historico .tabela-resultados td:nth-child(4) {
+    min-width: 150px;
+}
+.container-historico .tabela-resultados th:nth-child(5), /* Comissão */
+.container-historico .tabela-resultados td:nth-child(5) {
+    min-width: 150px;
+}
+.container-historico .tabela-resultados th:nth-child(6), /* Ações */
+.container-historico .tabela-resultados td:nth-child(6) {
+    min-width: 120px;
+}
+
+
+/* --- AJUSTES PARA CELULAR --- */
 @media (max-width: 768px) {
-    .container {
-        padding: 15px;
-    }
-    h1 {
-        font-size: 1.5em;
-    }
-    .cabecalho-usuario {
-        gap: 10px;
-        margin-bottom: -10px;
-    }
-    .main-buttons, .botoes-previsao {
-        flex-direction: column; /* Empilha os botões */
-    }
-    .radio-group {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .radio-group input[type="radio"] {
-        margin-right: 0;
-    }
+    .container { padding: 15px; }
+    h1 { font-size: 1.5em; }
+    .cabecalho-usuario { gap: 10px; margin-bottom: -10px; flex-wrap: wrap; justify-content: center; }
+    .main-buttons, .botoes-previsao { flex-direction: column; }
+    .radio-group { flex-direction: column; align-items: flex-start; }
+    .radio-group input[type="radio"] { margin-right: 0; }
 }
