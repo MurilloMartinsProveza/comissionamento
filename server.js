@@ -3,7 +3,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const jwt =require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const path = require('path'); // <-- MUDANÇA 1: Importa o módulo 'path'
 require('dotenv').config();
@@ -26,7 +26,7 @@ mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log('>>> SUCESSO: Conectado ao MongoDB Atlas! <<<'))
 .catch((err) => console.error('--- ERRO: Falha ao conectar ao MongoDB ---', err));
 
-// ... (O resto do seu código de Schemas e Rotas continua exatamente igual)
+// --- O resto do código continua igual ---
 const UsuarioSchema = new mongoose.Schema({ nome: { type: String, required: true }, email: { type: String, required: true, unique: true, lowercase: true }, senha: { type: String, required: true }, });
 const Usuario = mongoose.model('Usuario', UsuarioSchema);
 const VendaSchema = new mongoose.Schema({ idUsuario: { type: mongoose.Schema.Types.ObjectId, ref: 'Usuario', required: true }, dadosVenda: { type: Object, required: true }, });
