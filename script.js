@@ -1,4 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // --- CONFIGURAÇÃO PRINCIPAL DA API ---
+    // TROQUE A LINHA ABAIXO PELA SUA URL PÚBLICA DO RENDER.COM QUANDO FOR HOSPEDAR
+    const ENDERECO_API = 'http://localhost:3000'; // Para testes locais
+    // Exemplo para quando hospedar: const ENDERECO_API = 'https://calculadora-comissao.onrender.com';
+
     // --- LÓGICA DE AUTENTICAÇÃO (RODA EM TODAS AS PÁGINAS) ---
     const btnCadastrar = document.getElementById('btnCadastrar');
     const btnLogin = document.getElementById('btnLogin');
@@ -10,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const email = document.getElementById('email').value;
             const senha = document.getElementById('senha').value;
             try {
-                const resposta = await fetch('http://localhost:3000/api/auth/cadastro', { 
+                const resposta = await fetch(`${ENDERECO_API}/api/auth/cadastro`, { 
                     method: 'POST', 
                     headers: { 'Content-Type': 'application/json' }, 
                     body: JSON.stringify({ nome, email, senha }) 
@@ -28,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const email = document.getElementById('email').value;
             const senha = document.getElementById('senha').value;
             try {
-                const resposta = await fetch('http://localhost:3000/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, senha }) });
+                const resposta = await fetch(`${ENDERECO_API}/api/auth/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, senha }) });
                 const dados = await resposta.json();
                 if (!resposta.ok) { return alert('Erro no login: ' + (dados.msg || 'Credenciais inválidas.')); }
                 localStorage.setItem('token', dados.token);
@@ -96,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function() {
         async function buscarEExibirDadosUsuario() {
             if (!token) return;
             try {
-                const resposta = await fetch('http://localhost:3000/api/auth/me', {
+                const resposta = await fetch(`${ENDERECO_API}/api/auth/me`, {
                     headers: { 'x-auth-token': token }
                 });
                 if (!resposta.ok) throw new Error('Falha ao buscar dados do usuário');
@@ -116,7 +121,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (idVendaEmEdicao) {
                 atualizarVenda();
             } else {
-                executarCalculo();
+                // Apenas executa o cálculo, não salva
+                if (executarCalculo()) {
+                    containerResultados.classList.remove('hidden');
+                }
             }
         });
         btnSalvar.addEventListener('click', salvarNovaVenda);
@@ -175,7 +183,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!executarCalculo()) return;
             
             try {
-                const resposta = await fetch('http://localhost:3000/api/vendas', {
+                const resposta = await fetch(`${ENDERECO_API}/api/vendas`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
                     body: JSON.stringify(dadosCalculoAtual)
@@ -195,7 +203,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!executarCalculo()) return;
             
             try {
-                const resposta = await fetch(`http://localhost:3000/api/vendas/${idVendaEmEdicao}`, {
+                const resposta = await fetch(`${ENDERECO_API}/api/vendas/${idVendaEmEdicao}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
                     body: JSON.stringify(dadosCalculoAtual)
@@ -265,24 +273,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 const row = document.createElement('tr');
                 row.setAttribute('onclick', `carregarDetalhesVenda('${venda._id}')`);
                 row.setAttribute('title', 'Clique para ver os detalhes desta venda');
-                row.innerHTML = `
-                    <td>${dados.date ? new Date(dados.date + 'T12:00:00').toLocaleDateString('pt-BR') : 'Inválido'}</td>
-                    <td>${dados.nomeCliente || 'N/A'}</td>
-                    <td>${dados.plan || 'N/A'}</td>
-                    <td>${typeof dados.value === 'number' ? dados.value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'Inválido'}</td>
-                    <td>${typeof dados.netCommission === 'number' ? dados.netCommission.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'Inválido'}</td>
-                    <td class="botoes-acao">
-                        <button class="btn-editar" onclick="iniciarModoEdicao('${venda._id}', event)">Editar</button>
-                        <button class="btn-excluir" onclick="excluirVenda('${venda._id}', event)">Excluir</button>
-                    </td>
-                `;
+                row.innerHTML = `<td>${dados.date ? new Date(dados.date + 'T12:00:00').toLocaleDateString('pt-BR') : 'Inválido'}</td><td>${dados.nomeCliente || 'N/A'}</td><td>${dados.plan || 'N/A'}</td><td>${typeof dados.value === 'number' ? dados.value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'Inválido'}</td><td>${typeof dados.netCommission === 'number' ? dados.netCommission.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : 'Inválido'}</td><td class="botoes-acao"><button class="btn-editar" onclick="iniciarModoEdicao('${venda._id}', event)">Editar</button><button class="btn-excluir" onclick="excluirVenda('${venda._id}', event)">Excluir</button></td>`;
                 corpoTabelaHistorico.appendChild(row);
             });
         }
         
         async function carregarVendasDoServidor() {
             try {
-                const resposta = await fetch('http://localhost:3000/api/vendas', { headers: { 'x-auth-token': token } });
+                const resposta = await fetch(`${ENDERECO_API}/api/vendas`, { headers: { 'x-auth-token': token } });
                 if (!resposta.ok) { if(resposta.status === 401) window.location.href = '/login.html'; throw new Error('Falha ao buscar vendas'); }
                 vendasEmCache = await resposta.json();
                 return vendasEmCache;
@@ -430,7 +428,7 @@ document.addEventListener('DOMContentLoaded', function() {
             evento.stopPropagation();
             if (confirm("Tem certeza que deseja excluir esta venda do histórico?")) {
                 try {
-                    const resposta = await fetch(`http://localhost:3000/api/vendas/${id}`, { method: 'DELETE', headers: { 'x-auth-token': token } });
+                    const resposta = await fetch(`${ENDERECO_API}/api/vendas/${id}`, { method: 'DELETE', headers: { 'x-auth-token': token } });
                     if (!resposta.ok) throw new Error('Falha ao excluir');
                     alert('Venda excluída com sucesso!');
                     renderizarHistorico();
@@ -443,7 +441,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const vendasParaExcluir = [...vendasEmCache];
                 try {
                     for(const venda of vendasParaExcluir) {
-                        await fetch(`http://localhost:3000/api/vendas/${venda._id}`, { method: 'DELETE', headers: { 'x-auth-token': token } });
+                        await fetch(`${ENDERECO_API}/api/vendas/${venda._id}`, { method: 'DELETE', headers: { 'x-auth-token': token } });
                     }
                     alert('Histórico limpo com sucesso!');
                     renderizarHistorico();
