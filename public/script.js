@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     // --- CONFIGURAÇÃO PRINCIPAL DA API ---
     // TROQUE A LINHA ABAIXO PELA SUA URL PÚBLICA DO RENDER.COM QUANDO FOR HOSPEDAR
-    const ENDERECO_API = 'http://localhost:3000'; // Para testes locais
+  const ENDERECO_API = 'https://comissionamento.onrender.com'; // Para testes locais
     // Exemplo para quando hospedar: const ENDERECO_API = 'https://calculadora-comissao.onrender.com';
 
     // --- LÓGICA DE AUTENTICAÇÃO (RODA EM TODAS AS PÁGINAS) ---
